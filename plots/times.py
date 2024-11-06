@@ -19,15 +19,16 @@ from scipy.optimize import curve_fit
 
 
 # File path
-dim: int = 2
-L: int = 5
-T = '2.00'
 path = '//wsl.localhost/Ubuntu/home/marcofava/compphys_examples/sph_model/data/'
 # path = '~/compphys_examples/sph_model/data/'
 extension = '.txt'
-name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T
-filename = path + name + extension
-# filename = 'data_3x30_2.txt'
+
+def filename(name_in):
+     """
+     arg: name_in
+     returns filename = path + name_in + extension
+     """
+     return path + name_in + extension
 
 
 ### FUNCTION TO EXTRACT THE DATA
@@ -156,203 +157,212 @@ def plot_data_multi_T(filename_in):
      # plt.show()
 
 
-# plot_data(filename)
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# n_1 = np.size(data,0)
-# t_1 = 32*60 + 45
-# ratio_1 = n_1/t_1
-# print(f'ratio try_num=1 = {ratio_1}')
 
 
-# path1 = path + 'important/'
-# name1 = name + '_1'
-# filename1 = path1 + name1 + extension
-# plot_data(filename1)
-# dim, L, T, data = extract_data(filename1)
-# data = np.array(data)
-# n_0 = np.size(data,0)
-# t_0 = 28*60 + 30
-# ratio_0 = n_0/t_0
-# print(f'ratio try_num=0 = {ratio_0}')
 
 
-# path0 = path + 'important/'
-# name0 = name + '_0'
-# filename0 = path0 + name0 + extension
-# plot_data(filename0)
-# dim, L, T, data = extract_data(filename0)
-# data = np.array(data)
-# n_0 = np.size(data,0)
-# t_0 = 28*60 + 30
-# ratio_0 = n_0/t_0
-# print(f'ratio try_num=0 = {ratio_0}')
 
 
-dim = 3
-L = 5
-name = 'data_d' + str(dim) + '_L' + str(L) + '_0'
-# name = 'data_d2_L5_T10.00_0'
-filename = path + name + extension
-plot_data_multi_T(filename)
-# dim = 3
-# L = 7
-# name = 'old/data_d' + str(dim) + '_L' + str(L) + '_2'
-# filename = path + name + extension
-# plot_data_multi_T(filename)
+# non ricodo cosa ci sia dopo questo commento
 
 
-# try_num = [2, 4, 8, 16, 32, 1410065408]
-# for n in try_num:
-#      name = 'try_num_' + str(n)
-#      filename = path + name + extension
-#      plot_data_single_T(filename)
-# k = 50000
-# n=0
-# name = 'try_num_' + str(n)
-# filename = path + name + extension
-# # Convert the list of lists to a numpy array for easier processing
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# e = data[:k,0]
-# m = data[:k,1]
-# cv = data[:k,2]
-# chi = data[:k,3]
-
-# # number of Montecarlo cycles
-# x = [i+1 for i in range(k)]
-
-# plt.plot(x,cv)
-# plt.xlabel('$n_{MC}$')
-# plt.ylabel('<e>')
-# plt.grid()
-
-# ####################
-# dim = 2
-# L = 5
-# T0 = '0.10'
-# theta0 = '0.1'
-# name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T0
-# filename = path + name + extension
-# # Convert the list of lists to a numpy array for easier processing
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# e = data[:,0]
-# m = data[:,1]
-# cv = data[:,2]
-# chi = data[:,3]
-# k = np.size(e)
-
-# # number of Montecarlo cycles
-# x = [i+1 for i in range(k)]
-# plt.plot(x,cv)                                                   ### -- ###
+# # # # # plot_data(filename)
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # n_1 = np.size(data,0)
+# # # # # t_1 = 32*60 + 45
+# # # # # ratio_1 = n_1/t_1
+# # # # # print(f'ratio try_num=1 = {ratio_1}')
 
 
-# ####################
-# T1 = '0.10_1'
-# theta1 = '0.4'
-# name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T1
-# filename = path + name + extension
-# # Convert the list of lists to a numpy array for easier processing
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# e = data[:,0]
-# m = data[:,1]
-# cv = data[:,2]
-# chi = data[:,3]
-# k = np.size(e)
-
-# # number of Montecarlo cycles
-# x = [i+1 for i in range(k)]
-# plt.plot(x,cv)                                                   ### -- ###
+# # # # # path1 = path + 'important/'
+# # # # # name1 = name + '_1'
+# # # # # filename1 = path1 + name1 + extension
+# # # # # plot_data(filename1)
+# # # # # dim, L, T, data = extract_data(filename1)
+# # # # # data = np.array(data)
+# # # # # n_0 = np.size(data,0)
+# # # # # t_0 = 28*60 + 30
+# # # # # ratio_0 = n_0/t_0
+# # # # # print(f'ratio try_num=0 = {ratio_0}')
 
 
-# ####################
-# T2 = '0.10_2'
-# theta2 = '0.2'
-# name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T2
-# filename = path + name + extension
-# # Convert the list of lists to a numpy array for easier processing
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# e = data[:,0]
-# m = data[:,1]
-# cv = data[:,2]
-# chi = data[:,3]
-# k = np.size(e)
-
-# # number of Montecarlo cycles
-# x = [i+1 for i in range(k)]
-# plt.plot(x,cv)                                                   ### -- ###
+# # # # # path0 = path + 'important/'
+# # # # # name0 = name + '_0'
+# # # # # filename0 = path0 + name0 + extension
+# # # # # plot_data(filename0)
+# # # # # dim, L, T, data = extract_data(filename0)
+# # # # # data = np.array(data)
+# # # # # n_0 = np.size(data,0)
+# # # # # t_0 = 28*60 + 30
+# # # # # ratio_0 = n_0/t_0
+# # # # # print(f'ratio try_num=0 = {ratio_0}')
 
 
-# ####################
-# T3 = '0.10_3'
-# theta3 = '0.1_0'
-# name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T3
-# filename = path + name + extension
-# # Convert the list of lists to a numpy array for easier processing
-# dim, L, T, data = extract_data(filename)
-# data = np.array(data)
-# e = data[:,0]
-# m = data[:,1]
-# cv = data[:,2]
-# chi = data[:,3]
-# k = np.size(e)
-
-# # number of Montecarlo cycles
-# x = [i+1 for i in range(k)]
-# plt.plot(x,cv)                                                   ### -- ###
-
-# lgd = [theta0,theta1,theta2,theta3]
-# plt.legend(lgd)
-# plt.grid()
-# plt.show()
+# # # # dim = 3
+# # # # L = 5
+# # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_0'
+# # # # # name = 'data_d2_L5_T10.00_0'
+# # # # filename = path + name + extension
+# # # # plot_data_multi_T(filename)
+# # # # # dim = 3
+# # # # # L = 7
+# # # # # name = 'old/data_d' + str(dim) + '_L' + str(L) + '_2'
+# # # # # filename = path + name + extension
+# # # # # plot_data_multi_T(filename)
 
 
-# def exponential_model(x, y0, b):
-#     return y0 + np.exp(-b * x)
+# # # # # try_num = [2, 4, 8, 16, 32, 1410065408]
+# # # # # for n in try_num:
+# # # # #      name = 'try_num_' + str(n)
+# # # # #      filename = path + name + extension
+# # # # #      plot_data_single_T(filename)
+# # # # # k = 50000
+# # # # # n=0
+# # # # # name = 'try_num_' + str(n)
+# # # # # filename = path + name + extension
+# # # # # # Convert the list of lists to a numpy array for easier processing
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # e = data[:k,0]
+# # # # # m = data[:k,1]
+# # # # # cv = data[:k,2]
+# # # # # chi = data[:k,3]
 
-# for i in range(2):
-#      dim = 2
-#      L = 5
-#      # T = '0.10'
-#      # if(i):
-#      #      T = T + '_' + str(i)
+# # # # # # number of Montecarlo cycles
+# # # # # x = [i+1 for i in range(k)]
+
+# # # # # plt.plot(x,cv)
+# # # # # plt.xlabel('$n_{MC}$')
+# # # # # plt.ylabel('<e>')
+# # # # # plt.grid()
+
+# # # # # ####################
+# # # # # dim = 2
+# # # # # L = 5
+# # # # # T0 = '0.10'
+# # # # # theta0 = '0.1'
+# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T0
+# # # # # filename = path + name + extension
+# # # # # # Convert the list of lists to a numpy array for easier processing
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # e = data[:,0]
+# # # # # m = data[:,1]
+# # # # # cv = data[:,2]
+# # # # # chi = data[:,3]
+# # # # # k = np.size(e)
+
+# # # # # # number of Montecarlo cycles
+# # # # # x = [i+1 for i in range(k)]
+# # # # # plt.plot(x,cv)                                                   ### -- ###
+
+
+# # # # # ####################
+# # # # # T1 = '0.10_1'
+# # # # # theta1 = '0.4'
+# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T1
+# # # # # filename = path + name + extension
+# # # # # # Convert the list of lists to a numpy array for easier processing
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # e = data[:,0]
+# # # # # m = data[:,1]
+# # # # # cv = data[:,2]
+# # # # # chi = data[:,3]
+# # # # # k = np.size(e)
+
+# # # # # # number of Montecarlo cycles
+# # # # # x = [i+1 for i in range(k)]
+# # # # # plt.plot(x,cv)                                                   ### -- ###
+
+
+# # # # # ####################
+# # # # # T2 = '0.10_2'
+# # # # # theta2 = '0.2'
+# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T2
+# # # # # filename = path + name + extension
+# # # # # # Convert the list of lists to a numpy array for easier processing
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # e = data[:,0]
+# # # # # m = data[:,1]
+# # # # # cv = data[:,2]
+# # # # # chi = data[:,3]
+# # # # # k = np.size(e)
+
+# # # # # # number of Montecarlo cycles
+# # # # # x = [i+1 for i in range(k)]
+# # # # # plt.plot(x,cv)                                                   ### -- ###
+
+
+# # # # # ####################
+# # # # # T3 = '0.10_3'
+# # # # # theta3 = '0.1_0'
+# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T3
+# # # # # filename = path + name + extension
+# # # # # # Convert the list of lists to a numpy array for easier processing
+# # # # # dim, L, T, data = extract_data(filename)
+# # # # # data = np.array(data)
+# # # # # e = data[:,0]
+# # # # # m = data[:,1]
+# # # # # cv = data[:,2]
+# # # # # chi = data[:,3]
+# # # # # k = np.size(e)
+
+# # # # # # number of Montecarlo cycles
+# # # # # x = [i+1 for i in range(k)]
+# # # # # plt.plot(x,cv)                                                   ### -- ###
+
+# # # # # lgd = [theta0,theta1,theta2,theta3]
+# # # # # plt.legend(lgd)
+# # # # # plt.grid()
+# # # # # plt.show()
+
+
+# # # # # def exponential_model(x, y0, b):
+# # # # #     return y0 + np.exp(-b * x)
+
+# # # # # for i in range(2):
+# # # # #      dim = 2
+# # # # #      L = 5
+# # # # #      # T = '0.10'
+# # # # #      # if(i):
+# # # # #      #      T = T + '_' + str(i)
 
      
-#      T = '0.00_' + str(i)
+# # # # #      T = '0.00_' + str(i)
      
      
-#      name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T
-#      filename = path + name + extension
+# # # # #      name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T
+# # # # #      filename = path + name + extension
 
-#      # Convert the list of lists to a numpy array for easier processing
-#      dim, L, T, data = extract_data(filename)
-#      data = np.array(data)
-#      e = data[:,0]
-#      m = data[:,1]
-#      cv = data[:,2]
-#      chi = data[:,3]
-#      k = np.size(e)
+# # # # #      # Convert the list of lists to a numpy array for easier processing
+# # # # #      dim, L, T, data = extract_data(filename)
+# # # # #      data = np.array(data)
+# # # # #      e = data[:,0]
+# # # # #      m = data[:,1]
+# # # # #      cv = data[:,2]
+# # # # #      chi = data[:,3]
+# # # # #      k = np.size(e)
 
-#      # number of Montecarlo cycles
-#      x = [i+1 for i in range(k)]
-#      # plt.plot(x,chi)                                                   ### -- ###
-#      x_data = x[100000:]
-#      y_data = cv[100000:]
-#      # Perform the fit
-#      initial_guess = [1.0, 0.3]
-#      popt, pcov = curve_fit(exponential_model, x_data, y_data, p0=initial_guess)
+# # # # #      # number of Montecarlo cycles
+# # # # #      x = [i+1 for i in range(k)]
+# # # # #      # plt.plot(x,chi)                                                   ### -- ###
+# # # # #      x_data = x[100000:]
+# # # # #      y_data = cv[100000:]
+# # # # #      # Perform the fit
+# # # # #      initial_guess = [1.0, 0.3]
+# # # # #      popt, pcov = curve_fit(exponential_model, x_data, y_data, p0=initial_guess)
 
-#      # Extract the optimal parameters
-#      fitted_y0, fitted_b = popt
+# # # # #      # Extract the optimal parameters
+# # # # #      fitted_y0, fitted_b = popt
 
-#      print(f"Fitted parameters: y0 = {fitted_y0}, b = {fitted_b}")
+# # # # #      print(f"Fitted parameters: y0 = {fitted_y0}, b = {fitted_b}")
      
 
-# # lgd = ['0.1','0.4','0.2','0.1_0','0.4_0','0.2_0']
-# lgd = ['old','new']
-# plt.legend(lgd)
-# plt.grid()
-# plt.show()
+# # # # # # lgd = ['0.1','0.4','0.2','0.1_0','0.4_0','0.2_0']
+# # # # # lgd = ['old','new']
+# # # # # plt.legend(lgd)
+# # # # # plt.grid()
+# # # # # plt.show()

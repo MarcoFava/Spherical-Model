@@ -49,7 +49,7 @@ void System::open_file(string file_path, string filename)
 {
     // if there is no filename, write the default filename:
     if (filename == "") {
-        // format the T value with a specific number of decimal places to set the file name
+        // format the T value with a specific number of decimal places (2) to set the file name
         stringstream ss;
         ss << fixed << setprecision(2) << T_;
         string formattedT = ss.str();
@@ -57,7 +57,7 @@ void System::open_file(string file_path, string filename)
         // write the default filename
         filename = file_path + "data_d" + to_string(dim_) + "_L" + to_string(L_) + "_T" + formattedT + "_" + to_string(out_num) + ".txt";
     } else {
-        filename = file_path + filename + ".txt";
+        filename = file_path + filename + ".txt"; 
     }
 
     
