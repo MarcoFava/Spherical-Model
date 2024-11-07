@@ -34,20 +34,21 @@ class System
     private:
         std::ofstream ofile;                // output streamfile
         int width_ = 12, prec_ = 4;         // format the output
-        arma::SpMat<int> interaction_;      // matrix of interactions
+        arma::SpMat<double> interaction_;      // matrix of interactions
 
     public:
         int dim_, L_, N_;                   // dimension of the System, length of the tensor, N=L^dim total number of spins
         arma::vec spin_vec_;
         std::vector<double> track_E_, track_M_;
-        double E_, M_, T_, Beta_;                  // Energy, Magnetisation, Temperature, 1/Temperature
+        double E_, M_, T_, Beta_;               // Energy, Magnetisation, Temperature, 1/Temperature
+        double J_, H_, K_, h_;                  // Energy of interaction, Magnetic field, J*Beta, H*Beta
         double e_, m_, cv_, chi_;               // Energy/Number of spins, Magnetisation/Number of spins, Specific heat/Number of spins, Susceptivity/Number of spins
         double theta_;                          // Metropolis variable
         double N_sqrt_;
 
 
     // constructor
-    System(int dim_in, int L_in, double T_in, double theta_in);
+    System(int dim_in, int L_in, double T_in, double J_in, double H_in, double theta_in);
 
     // deconstructor
     ~System();
@@ -83,7 +84,7 @@ class System
     void export_data();
 
     // prints the structure of a sparse matrix to screen
-    void print_sp_matrix_structure(const arma::SpMat<int>& A);
+    void print_sp_matrix_structure(const arma::SpMat<double>& A);
 
     
 };

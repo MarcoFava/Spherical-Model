@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
 
-# x1 = [22**2, 8**3, 10**3, 13**3, 15**3]
-# y1 = [0.43, 0.47, 1.75, 8.94, 26.81]
+# x1 = [7**3, 10**3]
+# y1 = [34*60, (60+46)*60]
 
 # plt.plot(np.log(x1),np.log(y1))
 # plt.scatter(np.log(x1),np.log(y1))
+# # plt.loglog(x1,y1)
 # plt.grid()
-# # plt.show()
+# plt.show()
 
 # times = [3.32, 3.09, 3.115, 3.119, 3.497]
 # av = np.mean(times)
@@ -19,8 +20,9 @@ from scipy.optimize import curve_fit
 
 
 # File path
-path = '//wsl.localhost/Ubuntu/home/marcofava/compphys_examples/sph_model/data/'
-# path = '~/compphys_examples/sph_model/data/'
+path = '//home/marcofava/compphys_examples/Spherical-Model/data/'
+path = '//wsl.localhost/Ubuntu/home/marcofava/compphys_examples/Spherical-Model/data/'
+# path = '~/compphys_examples/Spherical-Model/data/'
 extension = '.txt'
 
 def filename(name_in):
@@ -76,7 +78,7 @@ def extract_data(filename_in):
 
 
 
-def plot_data_single_T(filename_in):
+def plot_data_single_T(filename_in, what_plot=[1,1,1,1]):
      """
      plots the data e, m, cv and chi stored in the given file
      """
@@ -92,33 +94,37 @@ def plot_data_single_T(filename_in):
      # number of Montecarlo cycles
      x = [i+1 for i in range(np.size(e))]
 
-     # plt.plot(x,e)
-     # plt.xlabel('$n_{MC}$')
-     # plt.ylabel('<e>')
-     # plt.grid()
-     # plt.show()
+     if what_plot[0]:
+          plt.plot(x,e)
+          plt.xlabel('$n_{MC}$')
+          plt.ylabel('<e>')
+          plt.grid()
+          plt.show()
 
-     plt.plot(x,m)
-     plt.xlabel('$n_{MC}$')
-     plt.ylabel('<m>')
-     plt.grid()
-     plt.show()
+     if what_plot[1]:
+          plt.plot(x,m)
+          plt.xlabel('$n_{MC}$')
+          plt.ylabel('<m>')
+          plt.grid()
+          plt.show()
 
-     # plt.plot(x,cv)
-     # plt.xlabel('$n_{MC}$')
-     # plt.ylabel('$c_V$')
-     # plt.grid()
-     # plt.show()
+     if what_plot[2]:
+          plt.plot(x,cv)
+          plt.xlabel('$n_{MC}$')
+          plt.ylabel('$c_V$')
+          plt.grid()
+          plt.show()
 
-     # plt.plot(x,chi)
-     # plt.xlabel('$n_{MC}$')
-     # plt.ylabel('$\chi$')
-     # plt.grid()
-     # plt.show()
+     if what_plot[3]:
+          plt.plot(x,chi)
+          plt.xlabel('$n_{MC}$')
+          plt.ylabel('$\chi$')
+          plt.grid()
+          plt.show()
 
 
 
-def plot_data_multi_T(filename_in):
+def plot_data_multi_T(filename_in, what_plot=[1,1,1,1]):
      """
      plots the data T, e, m, cv and chi stored in the given file
      """
@@ -132,33 +138,45 @@ def plot_data_multi_T(filename_in):
      cv = abs(data[:,3])
      chi = abs(data[:,4])
 
-     # plt.plot(T,e)
-     # plt.xlabel('T')
-     # plt.ylabel('<e>')
-     # plt.grid()
-     # plt.show()
+     if what_plot[0]:
+          plt.plot(T,e)
+          plt.scatter(T,e)
+          plt.xlabel('T')
+          plt.ylabel('<e>')
+          plt.grid()
+          plt.show()
 
-     plt.plot(T,m)
-     plt.xlabel('T')
-     plt.ylabel('<m>')
-     plt.grid()
-     plt.show()
+     if what_plot[1]:
+          plt.plot(T,m)
+          plt.scatter(T,m)
+          plt.xlabel('T')
+          plt.ylabel('<m>')
+          plt.grid()
+          plt.show()
 
-     # plt.loglog(T,cv)
-     # plt.xlabel('T')
-     # plt.ylabel('$c_V$')
-     # plt.grid()
-     # plt.show()
+     if what_plot[2]:
+          plt.plot(T,np.log(cv))
+          print((np.log(cv[-1]) - np.log(cv[0])) / (T[-1]-T[0]))
+          # plt.scatter(T,cv)
+          plt.xlabel('T')
+          plt.ylabel('$c_V$')
+          plt.grid()
+          plt.show()
 
-     # plt.loglog(T,chi)
-     # plt.xlabel('T')
-     # plt.ylabel('$\chi$')
-     # plt.grid()
-     # plt.show()
+     if what_plot[3]:
+          plt.plot(T,chi)
+          plt.scatter(T,chi)
+          plt.xlabel('T')
+          plt.ylabel('$\chi$')
+          plt.grid()
+          plt.show()
 
 
 
-
+what_plot = [0,0,1,0]
+# plot_data_single_T(filename("data_d3_L3_T1.00_6"),what_plot)
+plot_data_multi_T(filename("data_d3_L10_1"),what_plot)
+# plot_data_multi_T(filename("data_d3_L3_1"),what_plot)
 
 
 

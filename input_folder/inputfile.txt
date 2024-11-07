@@ -1,13 +1,15 @@
 # The parameters have to be stored in the following order on a single column:
-# dim, L, T_i, T_f, n_T_steps, theta, n_MC, burnin, out_num.
+# dim, L, T_i, T_f, J, H, n_T_steps, theta, n_MC, burnin, out_num.
 
 3           # <int> dim		    --> dimension of the system
-3		    # <int> L		    --> leght of the system (N = L^dim)
-1        # <double> T_i		--> initial temperature of the simulation
-1        # <double> T_f		--> final temperature of the simulation
-1           # <int> n_T_steps	--> number of temperature steps between T_i and T_f
-0.1         # <double> theta    --> metropolis' variable, in radians
-0.5e5         # <int> n_MC		--> number of Markov Chain Monte Carlo cycles
-0        	# <int> burnin		--> burn-in time
+10		    # <int> L		    --> leght of the system (N = L^dim)
+0.5           # <double> T_i		--> initial temperature of the simulation
+4           # <double> T_f		--> final temperature of the simulation
+1           # <double> J        --> Energy of interaction
+0           # <double> H        --> Magnetic field
+12          # <int> n_T_steps	--> number of temperature steps between T_i and T_f
+0.4         # <double> theta    --> metropolis' variable, in radians
+20e3       # <int> n_MC		--> number of Markov Chain Monte Carlo cycles
+0.65       	# <int> burnin		--> percentage of burn-in time
 
-0           # <int> out_num		--> number to change the name of the output file
+1          # <int> out_num		--> number to change the name of the output file

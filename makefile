@@ -43,13 +43,11 @@ link: ## Rule to link all the .o files in one executable file
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -larmadillo
 
 run: ## Rule to run the executable with default arguments
-	time ./$(TARGET) $(arg)
+	time -f "\t%E real,\t%U user,\t%S sys" ./$(TARGET) $(arg)
 
 run_simulation: ## Rule to run a bigger simulation, in general runs more than one time the code
-	./$(TARGET) $(file_path)inputfile.txt 0
 	./$(TARGET) $(file_path)inputfile.txt 1
-	./$(TARGET) $(file_path)inputfile1.txt 0
-	./$(TARGET) $(file_path)inputfile2.txt 1
+	./$(TARGET) $(file_path)inputfile1.txt 1
 
 clean: ## Remove object files and executables
 	rm -f *.o *.exe

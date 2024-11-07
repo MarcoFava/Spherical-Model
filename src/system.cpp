@@ -9,20 +9,20 @@ int try_num;     // Debug
 int out_num;     // Output number
 
 // ------------ Define the constructor System ------------
-System::System(int dim_in, int L_in, double T_in, double theta_in) : 
-    dim_(dim_in), L_(L_in), N_(pow(L_in,dim_in)), N_sqrt_(sqrt(N_)), T_(T_in), Beta_(1/T_in), theta_(theta_in)
+System::System(int dim_in, int L_in, double T_in, double J_in, double H_in, double theta_in) : 
+    dim_(dim_in), L_(L_in), N_(pow(L_in,dim_in)), N_sqrt_(sqrt(N_)), 
+    T_(T_in), Beta_(1/T_in), theta_(theta_in), J_(J_in), H_(H_in), K_(J_*Beta_), h_(H_*Beta_)
 {
     // set the random generator's seed:
     // https://arma.sourceforge.net/docs.html#rng_seed
     // arma::arma_rng::set_seed_random();
-    arma::arma_rng::set_seed(1);
+    arma::arma_rng::set_seed(2);
 
     // initialise the system
     initialise();
     E_ = tot_E(spin_vec_);
-    M_ = tot_M(spin_vec_);
-    track_E_.push_back(E_);
-    track_M_.push_back(M_);
+    update();
+    compute_all();
 
     // initialise the metropolis variable
     // theta_ = 0.1;
@@ -57,7 +57,7 @@ void System::open_file(string file_path, string filename)
         // write the default filename
         filename = file_path + "data_d" + to_string(dim_) + "_L" + to_string(L_) + "_T" + formattedT + "_" + to_string(out_num) + ".txt";
     } else {
-        filename = file_path + filename + ".txt"; 
+        filename = file_path + filename + ".txt";
     }
 
     
@@ -126,10 +126,13 @@ void System::initialise()
         for (int i = 0; i < N_; i++) {
             int j1 = (i + L_d) % N_;
             int j2 = (i - L_d + N_) % N_;
-            interaction_(i, j1) = 1;
-            interaction_(i, j2) = 1;
+            interaction_(i, j1) = 1.;
+            interaction_(i, j2) = 1.;
         }
     }
+
+    // we already moltiply the interaction matrix for K/2 (the 1/2 factor is to avoid double counting)
+    interaction_ *= 0.5 * K_;
 
     
     // // write the values for the first row
@@ -165,7 +168,7 @@ void System::initialise()
     spin_vec_ = arma::randu(N_) - 0.5;
     
     // normalise the system to have that sum(s_i^2) = N
-    normalise(spin_vec_); //awa
+    normalise(spin_vec_);
 }
 
 
@@ -183,11 +186,12 @@ void System::normalise(arma::vec &vector){
 
 // ------------ Define the function tot_E ------------
 //this function computes the total energy of the given spin vector
-//computed as -J*sum{s_i*s_j} - H*sum{s_i}, this is a sum over the closest neighbours without double counting
+//computed as K*sum{s_i*s_j} + h*sum{s_i}, K=J/kT and h=H/kT (so it's a unitless energy)
+//the first sum is over the closest neighbours without double counting
 double System::tot_E(arma::vec &spin_vec_in)
 {
-    double int_energy1 = 0.5 * arma::dot(spin_vec_in, interaction_ * spin_vec_in);
-    double mag_energy = arma::accu(spin_vec_in);
+    double int_energy1 = arma::dot(spin_vec_in, interaction_ * spin_vec_in); // note that the interaction matrix is already moltiplied by K/2
+    double mag_energy = h_ * arma::accu(spin_vec_in);
     
     return int_energy1 + mag_energy;
 }
@@ -270,7 +274,6 @@ double System::exp_value(const std::vector<double>& values, int power)
 
 // ------------ Define the function metropolis ------------
 //this function evolves the system by doing one cycle of Markov Chain Monte Carlo
-// ---->> there's a looot to improve
 void System::metropolis()
 {
 
@@ -340,18 +343,18 @@ void System::metropolis()
             // generate a random number r distributed in U(0,1)
             r = arma::randu();
 
-            // if(/*r < prob(s')/prob(s) = e^(-deltaE/T)*/){
-                // change the spin
-                // update energy and magnetisation
-            // }
+            /* if(r < prob(s')/prob(s) = e^(-deltaE/T)){
+                 change the spin
+                 update energy and magnetisation
+               }*/
 
-            if(r < exp(-deltaE*Beta_)){
+            if(r < exp(-deltaE)){ //*Beta_ -> 1/T già incluso nell'energia adimensionale
                 E_ = trial_E;
                 // M_ = tot_M(spin_vec_);   // this will be done in the function update() cause it's useless to do it here
                 spin_vec_ = trial_spin_vec;
             }
 
-            // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << track_E_.back() << endl;
+            // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << E_ << endl;
         }
     }
 }
@@ -396,7 +399,7 @@ void System::export_data()
 // ------------ Define the function print_sp_matrix_structure ------------
 // This function prints the structure of a sparse matrix to screen (arma::SpMat<int>)
 // It is useful to visualise the matricies during the coding process
-void System::print_sp_matrix_structure(const arma::SpMat<int>& A)
+void System::print_sp_matrix_structure(const arma::SpMat<double>& A)
 {
     using namespace arma;
 
@@ -415,8 +418,8 @@ void System::print_sp_matrix_structure(const arma::SpMat<int>& A)
     // Next, we want to set the string to a dot at each non-zero element.
     // To do this, we use the special loop iterator from the sp_mat class
     // to help us loop over only the non-zero matrix elements.
-    SpMat<int>::const_iterator it = A.begin();
-    SpMat<int>::const_iterator it_end = A.end();
+    SpMat<double>::const_iterator it = A.begin();
+    SpMat<double>::const_iterator it_end = A.end();
 
     int nnz = 0;
     for (it; it != it_end; ++it)
