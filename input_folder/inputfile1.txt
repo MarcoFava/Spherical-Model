@@ -10,6 +10,6 @@
 12          # <int> n_T_steps	--> number of temperature steps between T_i and T_f
 0.4         # <double> theta    --> metropolis' variable, in radians
 50e3       # <int> n_MC		--> number of Markov Chain Monte Carlo cycles
-0.65       	# <int> burnin		--> percentage of burn-in time
+0.5       	# <int> burnin		--> percentage of burn-in time
 
 0          # <int> out_num		--> number to change the name of the output file

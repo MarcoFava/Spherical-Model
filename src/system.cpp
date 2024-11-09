@@ -11,7 +11,7 @@ int out_num;     // Output number
 // ------------ Define the constructor System ------------
 System::System(int dim_in, int L_in, double T_in, double J_in, double H_in, double theta_in) : 
     dim_(dim_in), L_(L_in), N_(pow(L_in,dim_in)), N_sqrt_(sqrt(N_)), 
-    T_(T_in), Beta_(1/T_in), theta_(theta_in), J_(J_in), H_(H_in), K_(J_*Beta_), h_(H_*Beta_)
+    T_(T_in), Beta_(1/T_in), theta_(theta_in), J_(J_in), H_(H_in)
 {
     // set the random generator's seed:
     // https://arma.sourceforge.net/docs.html#rng_seed
@@ -132,7 +132,7 @@ void System::initialise()
     }
 
     // we already moltiply the interaction matrix for K/2 (the 1/2 factor is to avoid double counting)
-    interaction_ *= 0.5 * K_;
+    interaction_ *= 0.5 * J_;
 
     
     // // write the values for the first row
@@ -186,12 +186,12 @@ void System::normalise(arma::vec &vector){
 
 // ------------ Define the function tot_E ------------
 //this function computes the total energy of the given spin vector
-//computed as K*sum{s_i*s_j} + h*sum{s_i}, K=J/kT and h=H/kT (so it's a unitless energy)
+//computed as -K*sum{s_i*s_j} - h*sum{s_i}, K=J/kT and h=H/kT (so it's a unitless energy)
 //the first sum is over the closest neighbours without double counting
 double System::tot_E(arma::vec &spin_vec_in)
 {
-    double int_energy1 = arma::dot(spin_vec_in, interaction_ * spin_vec_in); // note that the interaction matrix is already moltiplied by K/2
-    double mag_energy = h_ * arma::accu(spin_vec_in);
+    double int_energy1 = - arma::dot(spin_vec_in, interaction_ * spin_vec_in); // note that the interaction matrix is already moltiplied by K/2
+    double mag_energy = - H_ * arma::accu(spin_vec_in);
     
     return int_energy1 + mag_energy;
 }
@@ -227,15 +227,21 @@ void System::update()
 void System::compute_all()
 {
     static bool is_first_call = true;
-    static double Beta_2;      // 1/(T_*T_)
+    static double Beta_2_N;      // 1/(T_*T_*N)
+    static double Beta_N;        // 1/(N*T)
     if(is_first_call){
-        Beta_2 = Beta_*Beta_;
+        Beta_2_N = Beta_*Beta_;
+        Beta_N = Beta_/N_;
         is_first_call = false;
     }
-    e_ = exp_value(track_E_,1)/N_;                          //average energy (normalised to the number of spins)
-    m_ = exp_value(track_M_,1)/N_;                          //average magnetisation (normalised to the number of spins)
-    cv_ = (exp_value(track_E_,2)/N_ - e_*e_*N_)*Beta_2;        //specific heat capacity (normalised to the number of spins)
-    chi_ = (exp_value(track_M_,2)/N_ - m_*m_*N_)*Beta_;        //susceptibility (normalised to the number of spins)
+    // e_ = exp_value(track_E_,1)/N_;                          //average energy (normalised to the number of spins)
+    e_ = arma::mean(track_E);
+    // m_ = exp_value(track_M_,1)/N_;                          //average magnetisation (normalised to the number of spins)
+    m_ = arma::mean(track_M);
+    // cv_ = (exp_value(track_E_,2)/N_ - e_*e_*N_)*Beta_2;        //specific heat capacity (normalised to the number of spins)
+    cv_ = arma::var(track_E_)*Beta_2_N;                         //Beta^2 Var(E) / N
+    // chi_ = (exp_value(track_M_,2)/N_ - m_*m_*N_)*Beta_;        //susceptibility (normalised to the number of spins)
+    chi_ = arma::var(track_M_)*Beta_N;                          //Beta Var(M) / N
 }
 
 
@@ -276,87 +282,43 @@ double System::exp_value(const std::vector<double>& values, int power)
 //this function evolves the system by doing one cycle of Markov Chain Monte Carlo
 void System::metropolis()
 {
-
-    if(try_num == 0){
-        
-        int i;                      // Position of the candidate spin to flip
-        double tral_s;
-        double trial_E;              // new spin proposal
+    for(int k=0; k<N_; k++) // loop over the number of spins
+    {
+        arma::vec trial_spin_vec;   // trial spin vector
+        // double theta_ = 0.1;         // define a small rotation angle theta (in radians)
+        double trial_E;             // energy of trial system
         double deltaE;
         double r;                   // random number between 0 and 1 to accept or not the candidate
 
-        arma::vec trial_spin_vec;   // trial spin vector
+        // generate a random orthogonal vector u
+        arma::vec u = arma::randn<arma::vec>(N_);   // use randn() or randu() ???
+        u -= arma::dot(u, spin_vec_) / N_ * spin_vec_; // arma::dot(spin_vec_, spin_vec_) == N_
+        normalise(u);  // normalize u to have the same norm as spin_vec_
 
+        // Calculate the rotated vector B
+        trial_spin_vec = cos(theta_) * spin_vec_ + sin(theta_) * u;
 
-        for(int k=0; k<N_; k++) // loop over the number of spins
-        {
-            // find the position of a random spin to change
-            i = arma::randi(arma::distr_param(0,N_-1));
+        // compute the difference of energy deltaE
+        trial_E = tot_E(trial_spin_vec);
+        deltaE = trial_E - E_;
 
-            // find a proposal value for the random spin
-            tral_s = (2 * arma::randu() - 1) * N_sqrt_;
-            trial_spin_vec = spin_vec_;
-            trial_spin_vec(i) = tral_s;
-            normalise(trial_spin_vec);
+        // generate a random number r distributed in U(0,1)
+        r = arma::randu();
 
-            // compute the difference of energy deltaE
-            trial_E = tot_E(trial_spin_vec);
-            deltaE = trial_E - track_E_.back();
+        /* if(r < prob(s')/prob(s) = e^(-deltaE/T)){
+                change the spin
+                update energy and magnetisation
+            }*/
 
-            // generate a random number r distributed in U(0,1)
-            r = arma::randu();
-
-            // if(/*r < prob(s')/prob(s) = e^(-deltaE/T)*/){
-                // change the spin
-                // update energy and magnetisation
-            // }
-
-            if(r < exp(-deltaE*Beta_)){
-                E_ = trial_E;
-                // M_ = tot_M(spin_vec_);   // this will be done in the function update() cause it's useless to do it here
-                spin_vec_ = trial_spin_vec;
-            }
-
-            // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << track_E_.back() << endl;
+        if(r < exp(-deltaE*Beta_)){
+            E_ = trial_E;
+            // M_ = tot_M(spin_vec_);   // this will be done in the function update() cause it's useless to do it here
+            spin_vec_ = trial_spin_vec;
         }
-    }else if(try_num == 1){
-        for(int k=0; k<N_; k++) // loop over the number of spins
-        {
-            arma::vec trial_spin_vec;   // trial spin vector
-            // double theta_ = 0.1;         // define a small rotation angle theta (in radians)
-            double trial_E;             // energy of trial system
-            double deltaE;
-            double r;                   // random number between 0 and 1 to accept or not the candidate
 
-            // generate a random orthogonal vector u
-            arma::vec u = arma::randn<arma::vec>(N_);   // use randn() or randu() ???
-            u -= arma::dot(u, spin_vec_) / arma::dot(spin_vec_, spin_vec_) * spin_vec_;
-            normalise(u);  // normalize u to have the same norm as spin_vec_
-
-            // Calculate the rotated vector B
-            trial_spin_vec = cos(theta_) * spin_vec_ + sin(theta_) * u;
-
-            // compute the difference of energy deltaE
-            trial_E = tot_E(trial_spin_vec);
-            deltaE = trial_E - E_;
-
-            // generate a random number r distributed in U(0,1)
-            r = arma::randu();
-
-            /* if(r < prob(s')/prob(s) = e^(-deltaE/T)){
-                 change the spin
-                 update energy and magnetisation
-               }*/
-
-            if(r < exp(-deltaE)){ //*Beta_ -> 1/T già incluso nell'energia adimensionale
-                E_ = trial_E;
-                // M_ = tot_M(spin_vec_);   // this will be done in the function update() cause it's useless to do it here
-                spin_vec_ = trial_spin_vec;
-            }
-
-            // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << E_ << endl;
-        }
+        // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << E_ << endl;
     }
+
 }
 
 
@@ -399,9 +361,10 @@ void System::export_data()
 // ------------ Define the function print_sp_matrix_structure ------------
 // This function prints the structure of a sparse matrix to screen (arma::SpMat<int>)
 // It is useful to visualise the matricies during the coding process
-void System::print_sp_matrix_structure(const arma::SpMat<double>& A)
+void System::print_sp_matrix_structure() //(const arma::SpMat<double>& A)
 {
     using namespace arma;
+    arma::SpMat<double> A = interaction_;
 
     // Declare a C-style 2D array of strings.
     string S[A.n_rows][A.n_cols];

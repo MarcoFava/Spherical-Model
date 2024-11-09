@@ -155,9 +155,8 @@ def plot_data_multi_T(filename_in, what_plot=[1,1,1,1]):
           plt.show()
 
      if what_plot[2]:
-          plt.plot(T,np.log(cv))
-          print((np.log(cv[-1]) - np.log(cv[0])) / (T[-1]-T[0]))
-          # plt.scatter(T,cv)
+          plt.plot(T,cv)
+          plt.scatter(T,cv)
           plt.xlabel('T')
           plt.ylabel('$c_V$')
           plt.grid()
@@ -174,9 +173,15 @@ def plot_data_multi_T(filename_in, what_plot=[1,1,1,1]):
 
 
 what_plot = [0,0,1,0]
-# plot_data_single_T(filename("data_d3_L3_T1.00_6"),what_plot)
-plot_data_multi_T(filename("data_d3_L10_1"),what_plot)
+# plot_data_single_T(filename("data_d3_L3_T1.00_5"),what_plot)
+plot_data_multi_T(filename("data_d5_L3_0"),what_plot)
+
+# plot_data_single_T(filename("save_data/data_d3_L3_T1.00_10"),what_plot)
+# plot_data_multi_T(filename("data_d3_L8_0"))#,what_plot)
+# plot_data_multi_T(filename("data_d3_L3_2"),what_plot)
 # plot_data_multi_T(filename("data_d3_L3_1"),what_plot)
+
+
 
 
 

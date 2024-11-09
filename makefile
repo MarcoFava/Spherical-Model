@@ -10,7 +10,7 @@ arg = $(in_filename) $(try_num)
 # Compiler and flags
 # usefull: -Wall
 CXX = g++
-CXXFLAGS = -std=c++11 -O3 -fopenmp
+CXXFLAGS = -std=c++11 -O3 #-fopenmp
 
 # Main file
 MAIN_FILE = sph_mod.cpp
@@ -43,7 +43,7 @@ link: ## Rule to link all the .o files in one executable file
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -larmadillo
 
 run: ## Rule to run the executable with default arguments
-	time -f "\t%E real,\t%U user,\t%S sys" ./$(TARGET) $(arg)
+	date & time -f "\t%E real,\t%U user,\t%S sys" ./$(TARGET) $(arg)
 
 run_simulation: ## Rule to run a bigger simulation, in general runs more than one time the code
 	./$(TARGET) $(file_path)inputfile.txt 1

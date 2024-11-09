@@ -122,7 +122,7 @@ for(int i=0 ; i < n_T_steps ; i++)
 
     //initialise the system with temperature T
     System my_sys(dim, L, T, J, H, theta);
-
+    // my_sys.print_sp_matrix_structure();
     #pragma omp critical
     {
     // check that everything is proceeding correctly
@@ -144,7 +144,7 @@ for(int i=0 ; i < n_T_steps ; i++)
     for(int j=0; j<burnin; j++){     
         // dynamically change the value of theta:
         double d_MC = double(j)/n_MC;
-        my_sys.theta_ = theta*(1-d_MC)*(1-d_MC);//*(1-d_MC)*(1-d_MC);
+        my_sys.theta_ = theta*(1-d_MC)*(1-d_MC);
 
         my_sys.metropolis();     //run algo for one cycle, one algo is N=L^dim steps
         my_sys.update();         //update energy and magnetisation after every cycle, only after the burn-in time 
@@ -152,26 +152,22 @@ for(int i=0 ; i < n_T_steps ; i++)
         // comment/uncomment this part when using multiple/single temperature 
         // my_sys.compute_all();
         // my_sys.export_data();         //export the data
-        // if((j+1) % (n_MC/20) == 0){
-        //     cout << " Cycle number " << j+1 << " out of " << n_MC << ", theta = " << my_sys.theta_ << endl;
-        // }
+        if((j+1) % (n_MC/20) == 0){
+            cout << " Cycle number " << j+1 << " out of " << n_MC << ", theta = " << my_sys.theta_ << endl;
+        }
 
     }
     // my_sys.theta_ = 0.1;
     for(int j=burnin; j<n_MC; j++){
-        // dynamically change the value of theta:
-        // double d_MC = j/n_MC;
-        // my_sys.theta_ = theta*(1-d_MC);//*(1-d_MC)*(1-d_MC);
-
         my_sys.metropolis();     //run algo for one cycle, one algo is N=L^dim steps
         my_sys.update();         //update energy and magnetisation after every cycle, only after the burn-in time 
         
         // comment/uncomment this part when using multiple/single temperature 
         // my_sys.compute_all();
         // my_sys.export_data();         //export the data
-        // if((j+1) % (n_MC/20) == 0){
-        //     cout << " Cycle number " << j+1 << " out of " << n_MC << ", <e> = " << my_sys.e_ << endl;
-        // }
+        if((j+1) % (n_MC/20) == 0){
+            cout << " Cycle number " << j+1 << " out of " << n_MC << ", <e> = " << my_sys.e_ << endl;
+        }
 
     }
 

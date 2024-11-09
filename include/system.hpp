@@ -15,11 +15,6 @@
 // #include <string>
 #include <fstream>
 #include <vector>
-// #include <tensors/tensor1.h>
-// #include <tensors/tensor2.h>
-// #include <tensors/tensor3.h>
-// #include <tensors/tensor4.h>
-// #include <tensors/operators.h>
 
 
 // let's debug :)
@@ -41,7 +36,7 @@ class System
         arma::vec spin_vec_;
         std::vector<double> track_E_, track_M_;
         double E_, M_, T_, Beta_;               // Energy, Magnetisation, Temperature, 1/Temperature
-        double J_, H_, K_, h_;                  // Energy of interaction, Magnetic field, J*Beta, H*Beta
+        double J_, H_;                  // Energy of interaction, Magnetic field
         double e_, m_, cv_, chi_;               // Energy/Number of spins, Magnetisation/Number of spins, Specific heat/Number of spins, Susceptivity/Number of spins
         double theta_;                          // Metropolis variable
         double N_sqrt_;
@@ -84,7 +79,7 @@ class System
     void export_data();
 
     // prints the structure of a sparse matrix to screen
-    void print_sp_matrix_structure(const arma::SpMat<double>& A);
+    void print_sp_matrix_structure(); //(const arma::SpMat<double>& A)
 
     
 };
