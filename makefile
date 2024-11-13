@@ -2,15 +2,15 @@
 
 # Define the default arguments
 file_path = input_folder/
-name = inputfile
+name = inputfile1
 in_filename = $(file_path)$(name).txt
-try_num = 1  				# optional because is used to debug
+try_num = 1				# optional because is used to debug
 arg = $(in_filename) $(try_num)
 
 # Compiler and flags
 # usefull: -Wall
 CXX = g++
-CXXFLAGS = -std=c++11 -O3 #-fopenmp
+CXXFLAGS = -std=c++11 -O3 -fopenmp -larmadillo
 
 # Main file
 MAIN_FILE = sph_mod.cpp

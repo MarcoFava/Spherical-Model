@@ -11,18 +11,17 @@ int out_num;     // Output number
 // ------------ Define the constructor System ------------
 System::System(int dim_in, int L_in, double T_in, double J_in, double H_in, double theta_in) : 
     dim_(dim_in), L_(L_in), N_(pow(L_in,dim_in)), N_sqrt_(sqrt(N_)), 
-    T_(T_in), Beta_(1/T_in), theta_(theta_in), J_(J_in), H_(H_in)
+    T_(T_in), Beta_(1/T_in), Beta_2(Beta_*Beta_), theta_(theta_in), J_(J_in), H_(H_in)
 {
     // set the random generator's seed:
     // https://arma.sourceforge.net/docs.html#rng_seed
-    // arma::arma_rng::set_seed_random();
-    arma::arma_rng::set_seed(2);
+    // arma::arma_rng::set_seed_random();       //done outside class because of threads dangerous
 
     // initialise the system
     initialise();
     E_ = tot_E(spin_vec_);
-    update();
-    compute_all();
+    // update();
+    // compute_all();
 
     // initialise the metropolis variable
     // theta_ = 0.1;
@@ -32,10 +31,15 @@ System::System(int dim_in, int L_in, double T_in, double J_in, double H_in, doub
 
 
 // ------------ Define the deconstructor of System ------------
-//this function is used to close all the opened stream files once the class is out of scope
+//this function is used to close all the opened stream files and 
+//clear/reset all the elemets to store values once the class is out of scope
 System::~System()
 {
     ofile.close();
+    interaction_.reset();
+    spin_vec_.reset();
+    track_E_.clear();
+    track_M_.clear();
 }
 
 
@@ -110,7 +114,7 @@ void System::open_file(string file_path, string filename)
 
 
 // ------------ Define the function initialise ------------
-//this function is used to initialise the tensor of the system
+//this function is used to initialise the hyperlattice of the system and the interaction matrix
 void System::initialise()
 {
     // __________ let's first initialise the interaction matrix: __________
@@ -131,7 +135,7 @@ void System::initialise()
         }
     }
 
-    // we already moltiply the interaction matrix for K/2 (the 1/2 factor is to avoid double counting)
+    // we already moltiply the interaction matrix for J/2 (the 1/2 factor is to avoid double counting)
     interaction_ *= 0.5 * J_;
 
     
@@ -226,22 +230,14 @@ void System::update()
 //this function computes the values of all parameters of the system
 void System::compute_all()
 {
-    static bool is_first_call = true;
-    static double Beta_2_N;      // 1/(T_*T_*N)
-    static double Beta_N;        // 1/(N*T)
-    if(is_first_call){
-        Beta_2_N = Beta_*Beta_;
-        Beta_N = Beta_/N_;
-        is_first_call = false;
-    }
-    // e_ = exp_value(track_E_,1)/N_;                          //average energy (normalised to the number of spins)
-    e_ = arma::mean(track_E);
-    // m_ = exp_value(track_M_,1)/N_;                          //average magnetisation (normalised to the number of spins)
-    m_ = arma::mean(track_M);
-    // cv_ = (exp_value(track_E_,2)/N_ - e_*e_*N_)*Beta_2;        //specific heat capacity (normalised to the number of spins)
-    cv_ = arma::var(track_E_)*Beta_2_N;                         //Beta^2 Var(E) / N
-    // chi_ = (exp_value(track_M_,2)/N_ - m_*m_*N_)*Beta_;        //susceptibility (normalised to the number of spins)
-    chi_ = arma::var(track_M_)*Beta_N;                          //Beta Var(M) / N
+    e_ = exp_value(track_E_,1)/N_;                          //average energy (normalised to the number of spins)
+    // e_ = arma::mean(track_E);
+    m_ = exp_value(track_M_,1)/N_;                          //average magnetisation (normalised to the number of spins)
+    // m_ = arma::mean(track_M);
+    cv_ = (exp_value(track_E_,2)/N_ - e_*e_*N_)*Beta_2;        //specific heat capacity (normalised to the number of spins)
+    // cv_ = arma::var(track_E_)*Beta_2_N;                         //Beta^2 Var(E) / N
+    chi_ = (exp_value(track_M_,2)/N_ - m_*m_*N_)*Beta_;        //susceptibility (normalised to the number of spins)
+    // chi_ = arma::var(track_M_)*Beta_N;                          //Beta Var(M) / N
 }
 
 
@@ -282,6 +278,50 @@ double System::exp_value(const std::vector<double>& values, int power)
 //this function evolves the system by doing one cycle of Markov Chain Monte Carlo
 void System::metropolis()
 {
+
+    // if(try_num == 0){
+        
+    //     int i;                      // Position of the candidate spin to flip
+    //     double tral_s;
+    //     double trial_E;              // new spin proposal
+    //     double deltaE;
+    //     double r;                   // random number between 0 and 1 to accept or not the candidate
+
+    //     arma::vec trial_spin_vec;   // trial spin vector
+
+
+    //     for(int k=0; k<N_; k++) // loop over the number of spins
+    //     {
+    //         // find the position of a random spin to change
+    //         i = arma::randi(arma::distr_param(0,N_-1));
+
+    //         // find a proposal value for the random spin
+    //         tral_s = (2 * arma::randu() - 1) * N_sqrt_;
+    //         trial_spin_vec = spin_vec_;
+    //         trial_spin_vec(i) = tral_s;
+    //         normalise(trial_spin_vec);
+
+    //         // compute the difference of energy deltaE
+    //         trial_E = tot_E(trial_spin_vec);
+    //         deltaE = trial_E - E_;
+
+    //         // generate a random number r distributed in U(0,1)
+    //         r = arma::randu();
+
+    //         // if(/*r < prob(s')/prob(s) = e^(-deltaE/T)*/){
+    //             // change the spin
+    //             // update energy and magnetisation
+    //         // }
+
+    //         if(r < exp(-deltaE*Beta_)){
+    //             E_ = trial_E;
+    //             // M_ = tot_M(spin_vec_);   // this will be done in the function update() cause it's useless to do it here
+    //             spin_vec_ = trial_spin_vec;
+    //         }
+
+    //         // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << track_E_.back() << endl;
+    //     }
+    // }else if(try_num == 1){
     for(int k=0; k<N_; k++) // loop over the number of spins
     {
         arma::vec trial_spin_vec;   // trial spin vector
@@ -318,6 +358,7 @@ void System::metropolis()
 
         // cout << "deltaE=" << deltaE << "    r=" << r << "   E=" << E_ << endl;
     }
+    // }
 
 }
 

@@ -173,219 +173,343 @@ def plot_data_multi_T(filename_in, what_plot=[1,1,1,1]):
 
 
 what_plot = [0,0,1,0]
-# plot_data_single_T(filename("data_d3_L3_T1.00_5"),what_plot)
-plot_data_multi_T(filename("data_d5_L3_0"),what_plot)
+# plot_data_single_T(filename("data_d2_L5_T10.00_2"),what_plot)
+# plot_data_single_T(filename("data_d2_L5_T1.00_3"),what_plot)
+# plot_data_single_T(filename("data_d3_L3_T5.00_1"),what_plot)
+# # # # # plot_data_multi_T(filename("data_d3_L3_1"),what_plot)
+# plot_data_multi_T(filename("data_d3_L5_1"),what_plot)
+# plot_data_multi_T(filename("data_d3_L5_2"),what_plot)
 
 # plot_data_single_T(filename("save_data/data_d3_L3_T1.00_10"),what_plot)
 # plot_data_multi_T(filename("data_d3_L8_0"))#,what_plot)
 # plot_data_multi_T(filename("data_d3_L3_2"),what_plot)
 # plot_data_multi_T(filename("data_d3_L3_1"),what_plot)
 
+a = [0,0,0,0]
+# a[0] = 1
+# a[1] = 1
+# a[2] = 1
+# a[3] = 1
+# # plot_data_single_T(filename("data_d3_L5_T1.00_10"),a) # theta=0.1, 3'02''
+# plot_data_single_T(filename("data_d3_L5_T1.00_11"),a) # theta=0.05, 3'00''
+# plot_data_single_T(filename("data_d3_L5_T1.00_12"),a) # theta=0.4, 3'10''
+# plot_data_single_T(filename("qdata_d3_L5_T1.00_13"),a) # adapt_theta=0.4, MC=100k->50%, 4'56''
+# # plot_data_single_T(filename("data_d3_L5_T1.00_14"),a) # adapt_theta=0.4, MC=30k->50%, 0'49''
+# plot_data_single_T(filename("data_d3_L5_T1.00_15"),a) # adapt_theta=0.4, MC=20k->50%, compute after burnin, 0'34''
+# plot_data_single_T(filename("data_d3_L5_T1.00_16"),a) # adapt_theta=0.4, MC=10k->50%, compute after burnin, 0'19''
+# plot_data_single_T(filename("data_d3_L5_T1.00_17"),a) # adapt_theta=0.4, MC=8k->50%, compute after burnin, 0'16''
+# plot_data_single_T(filename("data_d3_L5_T1.00_18"),a) # adapt_theta=0.4, MC=30k->50%, compute after burnin, 0'55''
+# plot_data_single_T(filename("data_d3_L5_T1.00_19"),a) # ALL_adapt_theta=0.4, MC=30k->50%, compute after burnin, 1'05''
+# plot_data_single_T(filename("data_d3_L5_T1.00_20"))#,a) # adapt_theta=0.4, MC=30k->50%+20k, compute after burnin, 1'05''
+# # plot_data_single_T(filename("data_d3_L5_T1.00_21"),a) # adapt_theta=0.4, MC=30k->50%+70k, compute after burnin, 1'05''
+
+# plot_data_single_T(filename("important/data_d3_L5_T1.00_0"),a) # 1'57''
+
+
+b = [0,0,0,0]
+# b[0] = 1
+# b[1] = 1
+# b[2] = 1
+# b[3] = 1
+# plot_data_multi_T(filename("data_d3_L5_30"),b) # 5^3, T: [0.1,7]/8, MC:30k, 5'56''
+# plot_data_multi_T(filename("data_d3_L5_31"),b) # 5^3, T: [0.1,1]/8, MC:20k, 1'50''
+# plot_data_multi_T(filename("data_d3_L5_32"),b) # 5^3, T: [0.2,10]/28, MC:20k, 6'06''
+# plot_data_multi_T(filename("data_d5_L3_33"),b) # 3^5, T: [1,10]/8, MC:20k, 5'48''
+# plot_data_multi_T(filename("data_d5_L3_34"),b) # 3^5, T: [7,10]/8, MC:20k, 9'01''
+# plot_data_multi_T(filename("data_d3_L10_35"),b) # 10^3, T: [3.5,5.5]/12, MC:20k, 
+# plot_data_multi_T(filename("data_d4_L4_40"),b) # 4^4, T: [1,8]/12, MC:20k, 8'48''
+# plot_data_multi_T(filename("data_d4_L4_41"),b) # 4^4, T: [5,6.5]/8, MC:20k,
+
+
+
+## DO SOME FINAL PLOTS
+save = 0
+ciccio = [0,0,0,0,0]
+# ciccio[0] = 1
+# ciccio[1] = 1
+# ciccio[2] = 1
+# ciccio[3] = 1
+ciccio[4] = 1
+
+# ENERGY PLOTS
+if ciccio[0]:
+     if save:
+          plt.figure(figsize=(6,4), dpi=300)
+
+     # data basic algo
+     dim, L, T, data = extract_data(filename("important/data_d3_L5_T1.00_0"))
+     data = np.array(data)
+     e = data[:,0]
+     m = data[:,1]
+     cv = data[:,2]
+     chi = data[:,3]
+     x = [i+1 for i in range(np.size(e))]
+     plt.plot(x,e, label="method 0")
+
+     # data basic adaptive
+     dim, L, T, data = extract_data(filename("data_d3_L5_T1.00_10"))
+     data = np.array(data)
+     e = data[:,0]
+     m = data[:,1]
+     cv = data[:,2]
+     chi = data[:,3]
+     x = [i+1 for i in range(np.size(e))]
+     plt.plot(x,e, label=r"$\theta=0.1$rad")
+
+     # data ultra adaptive
+     dim, L, T, data = extract_data(filename("data_d3_L5_T1.00_13"))
+     data = np.array(data)
+     e = data[:,0]
+     m = data[:,1]
+     cv = data[:,2]
+     chi = data[:,3]
+     x = [i+1 for i in range(np.size(e))]
+     plt.plot(x,e, label=r"adaptive $\theta$")
+
+     # data ultra adaptive
+     dim, L, T, data = extract_data(filename("data_d3_L5_T1.00_21"))
+     data = np.array(data)
+     e = data[:,0]
+     m = data[:,1]
+     cv = data[:,2]
+     chi = data[:,3]
+     x = [i+1 for i in range(np.size(e))]
+     plt.plot(x[15000:],e[15000:], label="mixed adaptive metropolis")
 
 
 
 
 
-# non ricodo cosa ci sia dopo questo commento
+     plt.ylim(-2.51,-2.4)
+     plt.xlim(0,1e5)
+     plt.title(r"Average normalised energy as a function of MC cycles")
+     plt.xlabel(r"$n_{MC}$")
+     plt.ylabel(r"$<e> [\mathbf{J}]$")
+     plt.legend()
+     plt.grid()
+     if save:
+          plt.savefig('C:/Users/ADMIN/Desktop/TESI/images/energy_plot.pdf', dpi=300, bbox_inches='tight')
+     else:
+          plt.show()
 
 
-# # # # # plot_data(filename)
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # n_1 = np.size(data,0)
-# # # # # t_1 = 32*60 + 45
-# # # # # ratio_1 = n_1/t_1
-# # # # # print(f'ratio try_num=1 = {ratio_1}')
+# CV PLOTS OVER TEMPERATURE
+# 4.3 , 6.5 , 8.68
+if ciccio[1]:
+     if save:
+          plt.figure(figsize=(6,4), dpi=300)
+
+     plt.hlines(0.5,0,8,'k', linestyle='-.', linewidth=1.5)
+
+     dim, L, T, data = extract_data(filename("data_d3_L5_32"))
+     data = np.array(data)
+     T = data[:,0]
+     cv = abs(data[:,3])
+     plt.plot(T,cv,label="d=3, L=5")
+     plt.scatter(T,cv, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d3_L10_35"))
+     data = np.array(data)
+     T = data[:,0]
+     cv = abs(data[:,3])
+     plt.plot(T,cv,'k',label="d=3, L=10")
+     plt.scatter(T,cv, s=8,c='k')
+
+     dim, L, T, data = extract_data(filename("data_d4_L4_40"))
+     data = np.array(data)
+     T = data[:,0]
+     cv = abs(data[:,3])
+     plt.plot(T,cv,label="d=4, L=4")
+     plt.scatter(T,cv, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d5_L3_33"))
+     data = np.array(data)
+     T = data[:,0]
+     cv = abs(data[:,3])
+     plt.plot(T,cv,label="d=5, L=3")
+     plt.scatter(T,cv, s=8)
+
+     plt.vlines(4.3,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(3.1, 0.25, 'T=4.3', color='black', fontsize=14)
+     plt.vlines(6.5,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(5.25, 0.24, 'T=6.5', color='black', fontsize=14)
+     plt.vlines(8.7,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(7.35, 0.22, 'T=8.7', color='black', fontsize=14)
 
 
-# # # # # path1 = path + 'important/'
-# # # # # name1 = name + '_1'
-# # # # # filename1 = path1 + name1 + extension
-# # # # # plot_data(filename1)
-# # # # # dim, L, T, data = extract_data(filename1)
-# # # # # data = np.array(data)
-# # # # # n_0 = np.size(data,0)
-# # # # # t_0 = 28*60 + 30
-# # # # # ratio_0 = n_0/t_0
-# # # # # print(f'ratio try_num=0 = {ratio_0}')
+
+     plt.ylim(0,0.6)
+     plt.xlim(0.5,10)
+     plt.title(r"Normalised Specific Heat vs. Temperature")
+     plt.xlabel(r"$\mathbf{T} \quad [\mathbf{J/k_B}]$")
+     plt.ylabel(r"$\mathbf{c_V} \quad [\mathbf{k_B}]$")
+     plt.legend()
+     plt.grid()
+     if save:
+          plt.savefig('C:/Users/ADMIN/Desktop/TESI/images/cV_temp_plot.pdf', dpi=300, bbox_inches='tight')
+     else:
+          plt.show()
+          
+
+# ENERGY PLOTS OVER TEMPERATURE
+if ciccio[2]:
+     if save:
+          plt.figure(figsize=(6,4), dpi=300)
+
+     dim, L, T, data = extract_data(filename("data_d3_L5_32"))
+     data = np.array(data)
+     T = data[:,0]
+     e = data[:,1]
+     plt.plot(T,e,label="d=3, L=5")
+     plt.scatter(T,e, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d4_L4_40"))
+     data = np.array(data)
+     T = data[:,0]
+     e = data[:,1]
+     plt.plot(T,e,label="d=4, L=4")
+     plt.scatter(T,e, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d5_L3_33"))
+     data = np.array(data)
+     T = data[:,0]
+     e = data[:,1]
+     plt.plot(T,e,label="d=5, L=3")
+     plt.scatter(T,e, s=8)
+
+     plt.vlines(4.3,-5,0,'r', linestyle='--', linewidth=1.5)
+     plt.text(3, -.8, 'T=4.3', color='black', fontsize=14)
+
+     plt.vlines(6.5,-5,0,'r', linestyle='--', linewidth=1.5)
+     plt.text(5.25, -1.7, 'T=6.5', color='black', fontsize=14)
+
+     plt.vlines(8.7,-5,0,'r', linestyle='--', linewidth=1.5)
+     plt.text(7.35, -1.8, 'T=8.7', color='black', fontsize=14)
+
+     x = np.linspace(-1,11)
+     plt.plot(x,x/2-3,'b-.', linewidth=1, label=r"T/2-3")
+     plt.plot(x,x/2-4,'r-.', linewidth=1, label=r"T/2-4")
+     plt.plot(x,x/2-5,'g-.', linewidth=1, label=r"T/2-5")
+
+     plt.ylim(-4.6,-0.25)
+     plt.xlim(0,10.1)
+     plt.title(r"Normalised Energy vs. Temperature")
+     plt.xlabel(r"$\mathbf{T} \quad [\mathbf{J/k_B}]$")
+     plt.ylabel(r"$\mathbf{<e>} \quad [\mathbf{J}]$")
+     plt.legend()
+     plt.grid()
+
+     if save:
+          plt.savefig('C:/Users/ADMIN/Desktop/TESI/images/energy_temp_plot.pdf', dpi=300, bbox_inches='tight')
+     else:
+          plt.show()
 
 
-# # # # # path0 = path + 'important/'
-# # # # # name0 = name + '_0'
-# # # # # filename0 = path0 + name0 + extension
-# # # # # plot_data(filename0)
-# # # # # dim, L, T, data = extract_data(filename0)
-# # # # # data = np.array(data)
-# # # # # n_0 = np.size(data,0)
-# # # # # t_0 = 28*60 + 30
-# # # # # ratio_0 = n_0/t_0
-# # # # # print(f'ratio try_num=0 = {ratio_0}')
+# MAGNETISATION PLOTS OVER TEMPERATURE
+if ciccio[3]:
+     if save:
+          plt.figure(figsize=(6,4), dpi=300)
+
+     dim, L, T, data = extract_data(filename("data_d3_L5_32"))
+     data = np.array(data)
+     T = data[:,0]
+     m = data[:,2]
+     plt.plot(T,m,label="d=3, L=5")
+     plt.scatter(T,m, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d4_L4_40"))
+     data = np.array(data)
+     T = data[:,0]
+     m = data[:,2]
+     plt.plot(T,m,label="d=4, L=4")
+     plt.scatter(T,m, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d5_L3_33"))
+     data = np.array(data)
+     T = data[:,0]
+     m = data[:,2]
+     plt.plot(T,m,label="d=5, L=3")
+     plt.scatter(T,m, s=8)
+
+     plt.vlines(4.3,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(2.7, 0.12, 'T=4.3', color='black', fontsize=14)
+
+     plt.vlines(6.5,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(6.6, 0.23, 'T=6.5', color='black', fontsize=14)
+
+     plt.vlines(8.7,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(7.4, 0.45, 'T=8.7', color='black', fontsize=14)
+
+     x = np.linspace(0,10)
+     plt.plot(x,(1-x/4.3)**0.5,'b-.', linewidth=1, label=r"$(1-\frac{T}{T_C})^{\frac{1}{2}}, T_C=4.3$")
+     plt.plot(x,(1-x/6.5)**0.5,'r-.', linewidth=1, label=r"$(1-\frac{T}{T_C})^{\frac{1}{2}}, T_C=6.5$")
+     plt.plot(x,(1-x/8.7)**0.5,'g-.', linewidth=1, label=r"$(1-\frac{T}{T_C})^{\frac{1}{2}}, T_C=8.7$")
+     plt.ylim(0.1,1)
+     plt.xlim(0,10.1)
+     plt.title(r"Normalised Magnetisation vs. Temperature")
+     plt.xlabel(r"$\mathbf{T} \quad [\mathbf{J/k_B}]$")
+     plt.ylabel(r"$\mathbf{<m>}$")
+     plt.legend()
+     plt.grid()
+
+     if save:
+          plt.savefig('C:/Users/ADMIN/Desktop/TESI/images/mag_temp_plot.pdf', dpi=300, bbox_inches='tight')
+     else:
+          plt.show()
 
 
-# # # # dim = 3
-# # # # L = 5
-# # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_0'
-# # # # # name = 'data_d2_L5_T10.00_0'
-# # # # filename = path + name + extension
-# # # # plot_data_multi_T(filename)
-# # # # # dim = 3
-# # # # # L = 7
-# # # # # name = 'old/data_d' + str(dim) + '_L' + str(L) + '_2'
-# # # # # filename = path + name + extension
-# # # # # plot_data_multi_T(filename)
+# CHI PLOTS OVER TEMPERATURE
+if ciccio[4]:
+     if save:
+          plt.figure(figsize=(6,4), dpi=300)
+
+     plt.vlines(4.3,0,3,'r', linestyle='--', linewidth=1.5)
+     plt.text(4.5, 2.75, 'T=4.3', color='black', fontsize=14)
+     plt.vlines(6.5,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(6, 1.1, 'T=6.5', color='black', fontsize=14)
+     plt.vlines(8.7,0,1,'r', linestyle='--', linewidth=1.5)
+     plt.text(8.2, 1.1, 'T=8.7', color='black', fontsize=14)
+
+     dim, L, T, data = extract_data(filename("data_d3_L5_32"))
+     data = np.array(data)
+     T = data[:,0]
+     chi = abs(data[:,4])
+     plt.plot(T,chi,label="d=3, L=5")
+     plt.scatter(T,chi, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d3_L10_35"))
+     data = np.array(data)
+     T = data[:,0]
+     chi = abs(data[:,4])
+     plt.plot(T,chi,'k',label="d=3, L=10")
+     plt.scatter(T,chi, s=8,c='k')
+
+     dim, L, T, data = extract_data(filename("data_d4_L4_40"))
+     data = np.array(data)
+     T = data[:,0]
+     chi = abs(data[:,4])
+     plt.plot(T,chi,label="d=4, L=4")
+     plt.scatter(T,chi, s=8)
+
+     dim, L, T, data = extract_data(filename("data_d5_L3_33"))
+     data = np.array(data)
+     T = data[:,0]
+     chi = abs(data[:,4])
+     plt.plot(T,chi,label="d=5, L=3")
+     plt.scatter(T,chi, s=8)
 
 
-# # # # # try_num = [2, 4, 8, 16, 32, 1410065408]
-# # # # # for n in try_num:
-# # # # #      name = 'try_num_' + str(n)
-# # # # #      filename = path + name + extension
-# # # # #      plot_data_single_T(filename)
-# # # # # k = 50000
-# # # # # n=0
-# # # # # name = 'try_num_' + str(n)
-# # # # # filename = path + name + extension
-# # # # # # Convert the list of lists to a numpy array for easier processing
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # e = data[:k,0]
-# # # # # m = data[:k,1]
-# # # # # cv = data[:k,2]
-# # # # # chi = data[:k,3]
 
-# # # # # # number of Montecarlo cycles
-# # # # # x = [i+1 for i in range(k)]
+     # plt.ylim(0,0.6)
+     plt.xlim(0.5,10)
+     plt.title(r"Normalised Susceptibility vs. Temperature")
+     plt.xlabel(r"$\mathbf{T} \quad [\mathbf{J/k_B}]$")
+     plt.ylabel(r"$\mathbf{\chi} \quad [\mathbf{1/J}]$")
+     plt.legend()
+     plt.grid()
+     if save:
+          plt.savefig('C:/Users/ADMIN/Desktop/TESI/images/chi_temp_plot.pdf', dpi=300, bbox_inches='tight')
+     else:
+          plt.show()
+          
 
-# # # # # plt.plot(x,cv)
-# # # # # plt.xlabel('$n_{MC}$')
-# # # # # plt.ylabel('<e>')
-# # # # # plt.grid()
-
-# # # # # ####################
-# # # # # dim = 2
-# # # # # L = 5
-# # # # # T0 = '0.10'
-# # # # # theta0 = '0.1'
-# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T0
-# # # # # filename = path + name + extension
-# # # # # # Convert the list of lists to a numpy array for easier processing
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # e = data[:,0]
-# # # # # m = data[:,1]
-# # # # # cv = data[:,2]
-# # # # # chi = data[:,3]
-# # # # # k = np.size(e)
-
-# # # # # # number of Montecarlo cycles
-# # # # # x = [i+1 for i in range(k)]
-# # # # # plt.plot(x,cv)                                                   ### -- ###
-
-
-# # # # # ####################
-# # # # # T1 = '0.10_1'
-# # # # # theta1 = '0.4'
-# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T1
-# # # # # filename = path + name + extension
-# # # # # # Convert the list of lists to a numpy array for easier processing
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # e = data[:,0]
-# # # # # m = data[:,1]
-# # # # # cv = data[:,2]
-# # # # # chi = data[:,3]
-# # # # # k = np.size(e)
-
-# # # # # # number of Montecarlo cycles
-# # # # # x = [i+1 for i in range(k)]
-# # # # # plt.plot(x,cv)                                                   ### -- ###
-
-
-# # # # # ####################
-# # # # # T2 = '0.10_2'
-# # # # # theta2 = '0.2'
-# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T2
-# # # # # filename = path + name + extension
-# # # # # # Convert the list of lists to a numpy array for easier processing
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # e = data[:,0]
-# # # # # m = data[:,1]
-# # # # # cv = data[:,2]
-# # # # # chi = data[:,3]
-# # # # # k = np.size(e)
-
-# # # # # # number of Montecarlo cycles
-# # # # # x = [i+1 for i in range(k)]
-# # # # # plt.plot(x,cv)                                                   ### -- ###
-
-
-# # # # # ####################
-# # # # # T3 = '0.10_3'
-# # # # # theta3 = '0.1_0'
-# # # # # name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T3
-# # # # # filename = path + name + extension
-# # # # # # Convert the list of lists to a numpy array for easier processing
-# # # # # dim, L, T, data = extract_data(filename)
-# # # # # data = np.array(data)
-# # # # # e = data[:,0]
-# # # # # m = data[:,1]
-# # # # # cv = data[:,2]
-# # # # # chi = data[:,3]
-# # # # # k = np.size(e)
-
-# # # # # # number of Montecarlo cycles
-# # # # # x = [i+1 for i in range(k)]
-# # # # # plt.plot(x,cv)                                                   ### -- ###
-
-# # # # # lgd = [theta0,theta1,theta2,theta3]
-# # # # # plt.legend(lgd)
-# # # # # plt.grid()
-# # # # # plt.show()
-
-
-# # # # # def exponential_model(x, y0, b):
-# # # # #     return y0 + np.exp(-b * x)
-
-# # # # # for i in range(2):
-# # # # #      dim = 2
-# # # # #      L = 5
-# # # # #      # T = '0.10'
-# # # # #      # if(i):
-# # # # #      #      T = T + '_' + str(i)
-
-     
-# # # # #      T = '0.00_' + str(i)
-     
-     
-# # # # #      name = 'data_d' + str(dim) + '_L' + str(L) + '_T' + T
-# # # # #      filename = path + name + extension
-
-# # # # #      # Convert the list of lists to a numpy array for easier processing
-# # # # #      dim, L, T, data = extract_data(filename)
-# # # # #      data = np.array(data)
-# # # # #      e = data[:,0]
-# # # # #      m = data[:,1]
-# # # # #      cv = data[:,2]
-# # # # #      chi = data[:,3]
-# # # # #      k = np.size(e)
-
-# # # # #      # number of Montecarlo cycles
-# # # # #      x = [i+1 for i in range(k)]
-# # # # #      # plt.plot(x,chi)                                                   ### -- ###
-# # # # #      x_data = x[100000:]
-# # # # #      y_data = cv[100000:]
-# # # # #      # Perform the fit
-# # # # #      initial_guess = [1.0, 0.3]
-# # # # #      popt, pcov = curve_fit(exponential_model, x_data, y_data, p0=initial_guess)
-
-# # # # #      # Extract the optimal parameters
-# # # # #      fitted_y0, fitted_b = popt
-
-# # # # #      print(f"Fitted parameters: y0 = {fitted_y0}, b = {fitted_b}")
-     
-
-# # # # # # lgd = ['0.1','0.4','0.2','0.1_0','0.4_0','0.2_0']
-# # # # # lgd = ['old','new']
-# # # # # plt.legend(lgd)
-# # # # # plt.grid()
-# # # # # plt.show()

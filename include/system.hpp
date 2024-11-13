@@ -27,19 +27,19 @@ extern int out_num;
 class System
 {
     private:
-        std::ofstream ofile;                // output streamfile
-        int width_ = 12, prec_ = 4;         // format the output
-        arma::SpMat<double> interaction_;      // matrix of interactions
+        std::ofstream ofile;                    // output streamfile
+        int width_ = 12, prec_ = 4;             // format the output
+        arma::SpMat<double> interaction_;       // matrix of interactions
 
     public:
-        int dim_, L_, N_;                   // dimension of the System, length of the tensor, N=L^dim total number of spins
+        int dim_, L_, N_;                       // dimension of the System, length of the tensor, N=L^dim total number of spins
         arma::vec spin_vec_;
         std::vector<double> track_E_, track_M_;
         double E_, M_, T_, Beta_;               // Energy, Magnetisation, Temperature, 1/Temperature
-        double J_, H_;                  // Energy of interaction, Magnetic field
+        double J_, H_;                          // Energy of interaction, Magnetic field
         double e_, m_, cv_, chi_;               // Energy/Number of spins, Magnetisation/Number of spins, Specific heat/Number of spins, Susceptivity/Number of spins
         double theta_;                          // Metropolis variable
-        double N_sqrt_;
+        double N_sqrt_, Beta_2;
 
 
     // constructor

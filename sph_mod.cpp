@@ -33,7 +33,7 @@ string filename_in = argv[1];
 if(argc == 3){
     try_num = atoi(argv[2]);    // try_num will be used to debug
 }else{
-    try_num = 0;                // try_num is an extern variable
+    try_num = 0;                // try_num is an extern variable, see system.hpp
 }
 
 
@@ -43,16 +43,16 @@ if(argc == 3){
 // the parameters are saved in this order: dim, L, T_i, T_f, J, H, n_T_steps, theta, n_MC, burnin, out_num.
 vector<double> parameters = read_param(filename_in);
 int dim = (int)parameters[0];           // dimension of the system
-int L = (int)parameters[1];             // leght of the system (N = L^dim) 
+int L = (int)parameters[1];             // length of the system (N = L^dim) 
 double T_i = parameters[2];             // initial temperature of the simulation
 double T_f = parameters[3];             // final temperature of the simulation
-double J = parameters[4];             // final temperature of the simulation
-double H = parameters[5];             // final temperature of the simulation
+double J = parameters[4];               // Energy strength of interaction
+double H = parameters[5];               // Magnetic field
 int n_T_steps = (int)parameters[6];     // number of temperature steps between T_i and T_f
 double theta = parameters[7];           // metropolis' parameter, in radians
 int n_MC = (int)parameters[8];          // number of Markov Chain Monte Carlo cycles
-int burnin = n_MC * parameters[9];        // burn-in time
-out_num = (int)parameters[10];           // extern parameter to change the name of the output file
+int burnin = n_MC * parameters[9];      // burn-in time
+out_num = (int)parameters[10];          // extern parameter to change the name of the output file
 
 if(burnin>=n_MC){
     cerr << "Error: The burn-in time is longer than the number of MCMC cycles." << endl;
@@ -117,6 +117,10 @@ arma::mat results = arma::mat(n_T_steps, 5);
 #pragma omp parallel for schedule(dynamic)
 for(int i=0 ; i < n_T_steps ; i++)
 {
+    // arma::arma_rng::set_seed(12345 + omp_get_thread_num());
+    int seed = 12345 + i; //+ omp_get_thread_num() * n_T_steps
+    arma::arma_rng::set_seed(seed);
+
     //update the temperature
     double T = T_i + i*dT;
 
@@ -125,6 +129,7 @@ for(int i=0 ; i < n_T_steps ; i++)
     // my_sys.print_sp_matrix_structure();
     #pragma omp critical
     {
+
     // check that everything is proceeding correctly
     cout    << "T=" 
             << setw(width) << setprecision(prec) << scientific << my_sys.T_ 
@@ -147,27 +152,27 @@ for(int i=0 ; i < n_T_steps ; i++)
         my_sys.theta_ = theta*(1-d_MC)*(1-d_MC);
 
         my_sys.metropolis();     //run algo for one cycle, one algo is N=L^dim steps
-        my_sys.update();         //update energy and magnetisation after every cycle, only after the burn-in time 
+        // my_sys.update();         //update energy and magnetisation after every cycle, only after the burn-in time 
         
         // comment/uncomment this part when using multiple/single temperature 
         // my_sys.compute_all();
         // my_sys.export_data();         //export the data
-        if((j+1) % (n_MC/20) == 0){
-            cout << " Cycle number " << j+1 << " out of " << n_MC << ", theta = " << my_sys.theta_ << endl;
-        }
+        // if((j+1) % (n_MC/20) == 0){
+        //     cout << " Cycle number " << j+1 << " out of " << n_MC << ", theta = " << my_sys.theta_ << endl;
+        // }
 
     }
     // my_sys.theta_ = 0.1;
-    for(int j=burnin; j<n_MC; j++){
+    for(int j=burnin; j<n_MC; j++){ // the value of theta now remains constant
         my_sys.metropolis();     //run algo for one cycle, one algo is N=L^dim steps
         my_sys.update();         //update energy and magnetisation after every cycle, only after the burn-in time 
         
         // comment/uncomment this part when using multiple/single temperature 
         // my_sys.compute_all();
         // my_sys.export_data();         //export the data
-        if((j+1) % (n_MC/20) == 0){
-            cout << " Cycle number " << j+1 << " out of " << n_MC << ", <e> = " << my_sys.e_ << endl;
-        }
+        // if((j+1) % (n_MC/20) == 0){
+        //     cout << " Cycle number " << j+1 << " out of " << n_MC << ", <e> = " << my_sys.e_ << endl;
+        // }
 
     }
 
